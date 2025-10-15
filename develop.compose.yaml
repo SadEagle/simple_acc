@@ -1,0 +1,5 @@
+services:
+  backend:
+    command: tail -F /dev/null
+    volumes:
+      - ./backend/:/backend/

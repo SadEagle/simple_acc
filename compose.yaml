@@ -1,0 +1,79 @@
+services:
+  backend:
+    image: small-acc:latest
+    build: ./backend/
+    # restart: unless-stopped
+    env_file:
+      - ./.env
+    environment:
+      - POSTGRES_DEV_SERVER=dev-db
+      - POSTGRES_TEST_SERVER=test-db
+    ports:
+      - "8000:8000"
+    networks:
+      - dev-db-network
+      - test-db-network
+    depends_on:
+      dev-db:
+        condition: service_healthy
+      test-db:
+        condition: service_healthy
+
+  dev-db:
+    image: docker.io/library/postgres:17.6-alpine3.22
+    # restart: always
+    shm_size: 128mb
+    env_file:
+      - ./.env
+    environment:
+      - POSTGRES_DB=${POSTGRES_DEV_DB}
+      - POSTGRES_USER=${POSTGRES_DEV_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_DEV_PASSWORD}
+    volumes:
+      - dev-db-volume:/var/lib/postgresql/data
+    networks:
+      - dev-db-network
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "pg_isready -U ${POSTGRES_DEV_USER} -d ${POSTGRES_DEV_DB}"
+        ]
+      interval: 10s
+      retries: 5
+      start_period: 30s
+      timeout: 10s
+
+  test-db:
+    image: docker.io/library/postgres:17.6-alpine3.22
+    # restart: always
+    shm_size: 128mb
+    env_file:
+      - ./.env
+    environment:
+      - POSTGRES_DB=${POSTGRES_TEST_DB}
+      - POSTGRES_USER=${POSTGRES_TEST_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_TEST_PASSWORD}
+    volumes:
+      - test-db-volume:/var/lib/postgresql/data
+    networks:
+      - test-db-network
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "pg_isready -U ${POSTGRES_TEST_USER} -d ${POSTGRES_TEST_DB}"
+        ]
+      interval: 10s
+      retries: 5
+      start_period: 30s
+      timeout: 10s
+
+networks:
+  dev-db-network:
+  test-db-network:
+
+
+volumes:
+  dev-db-volume:
+  test-db-volume:
