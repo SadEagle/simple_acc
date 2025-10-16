@@ -1,7 +1,7 @@
 from decimal import Decimal
 
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
-from sqlalchemy import CheckConstraint, MetaData, ForeignKey, func
+from sqlalchemy import CheckConstraint, MetaData, ForeignKey
 from sqlalchemy.ext.asyncio import AsyncAttrs
 
 
@@ -28,12 +28,14 @@ class AccumDB(Base):
     name: Mapped[str]
     rated_voltage: Mapped[Decimal]
     residual_capacity: Mapped[Decimal]
-    device_id: Mapped[int] = mapped_column(ForeignKey("device.id"))
+    device_id: Mapped[int] = mapped_column(
+        ForeignKey("device.id"), nullable=True, index=True
+    )
     device: Mapped["DeviceDB"] = relationship(back_populates="accums")
 
     __table_args__ = (
-        CheckConstraint("voltage > 0"),
-        CheckConstraint("residual_capacity > 0"),
+        CheckConstraint("voltage >= 0"),
+        CheckConstraint("residual_capacity >= 0"),
     )
 
 

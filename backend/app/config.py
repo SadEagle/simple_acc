@@ -3,6 +3,9 @@ from pydantic_settings import BaseSettings
 
 
 class Settings(BaseSettings):
+    DEVICE_MAX_CONNECTIONS: int = 5
+
+    # DB PARAMS
     POSTGRES_DEV_SERVER: str
     POSTGRES_DEV_PORT: int = 5432
     POSTGRES_DEV_USER: str

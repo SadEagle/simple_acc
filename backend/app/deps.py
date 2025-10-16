@@ -1,7 +1,6 @@
 from typing import Annotated, AsyncGenerator, TypeAlias
 from fastapi import Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select
 
 from app.model_db import AccumDB, DeviceDB
 from app.db import async_engine
@@ -19,27 +18,25 @@ SessionDep: TypeAlias = Annotated[AsyncSession, Depends(create_session)]
 
 # NOTE: crud operator
 async def get_accum_db(session: SessionDep, accum_id: int) -> AccumDB:
-    statement = select(AccumDB).where(AccumDB.id == accum_id)
-    session_accum = await session.scalar(statement)
+    session_accum = await session.get(AccumDB, accum_id)
     if session_accum is None:
         raise HTTPException(
-            detail="Accumulator wasn't found", status_code=status.HTTP_404_NOT_FOUND
+            status_code=status.HTTP_404_NOT_FOUND, detail="Accumulator wasn't found"
         )
     return session_accum
 
 
-CurrentAccumDBDep: TypeAlias = Annotated[AsyncSession, Depends(get_accum_db)]
+CurrentAccumDep: TypeAlias = Annotated[AccumDB, Depends(get_accum_db)]
 
 
 # NOTE: crud operator
-async def get_device_db(session: SessionDep, device_id: int) -> AccumDB:
-    statement = select(AccumDB).where(DeviceDB.id == device_id)
-    session_accum = await session.scalar(statement)
-    if session_accum is None:
+async def get_device_db(session: SessionDep, device_id: int) -> DeviceDB:
+    session_device = await session.get(DeviceDB, device_id)
+    if session_device is None:
         raise HTTPException(
-            detail="Device wasn't found", status_code=status.HTTP_404_NOT_FOUND
+            status_code=status.HTTP_404_NOT_FOUND, detail="Device wasn't found"
         )
-    return session_accum
+    return session_device
 
 
-CurrentDeviceDBDep: TypeAlias = Annotated[AsyncSession, Depends(get_device_db)]
+CurrentDeviceDep: TypeAlias = Annotated[DeviceDB, Depends(get_device_db)]
