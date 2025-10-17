@@ -12,7 +12,7 @@ from app.model_data import (
     DeviceCreate,
     DeviceUpdate,
     DeviceWithAccums,
-    TupleDevices,
+    # TupleDevices,
     Message,
 )
 from app.deps import CurrentDeviceDep, SessionDep
@@ -41,12 +41,12 @@ async def get_device_with_accums(
     return device_with_accums
 
 
-@app_devices.get("/")
-async def get_device_page(
-    session: SessionDep, p: int = 1, p_size: int = 40
-) -> tuple["Device", ...]:
-    device_page_data = await get_device_page_db(session, p, p_size)
-    return TupleDevices.validate_python(device_page_data, from_attributes=True)
+# @app_devices.get("/")
+# async def get_device_page(
+#     session: SessionDep, p: int = 1, p_size: int = 40
+# ) -> tuple["Device", ...]:
+#     device_page_data = await get_device_page_db(session, p, p_size)
+#     return TupleDevices.validate_python(device_page_data, from_attributes=True)
 
 
 @app_devices.post("/add", status_code=status.HTTP_201_CREATED)

@@ -12,7 +12,7 @@ from app.model_data import (
     AccumCreate,
     AccumUpdate,
     AccumWithDevice,
-    TupleAccums,
+    # TupleAccums,
     Message,
 )
 from app.deps import CurrentAccumDep, SessionDep, get_device_db
@@ -26,12 +26,13 @@ async def get_accum(current_accum: CurrentAccumDep) -> Accum:
     return Accum.model_validate(current_accum)
 
 
-@app_accums.get("/")
-async def get_accum_page(
-    session: SessionDep, p: int = 1, p_size: int = 40
-) -> tuple["Accum", ...]:
-    accum_page_data = await get_accum_page_db(session, p, p_size)
-    return TupleAccums.validate_python(accum_page_data, from_attributes=True)
+# TODO: fix
+# @app_accums.get("/")
+# async def get_accum_page(
+#     session: SessionDep, p: int = 1, p_size: int = 40
+# ) -> tuple["Accum", ...]:
+#     accum_page_data = await get_accum_page_db(session, p, p_size)
+#     return TupleAccums.validate_python(accum_page_data, from_attributes=True)
 
 
 @app_accums.get("/{accum_id}")

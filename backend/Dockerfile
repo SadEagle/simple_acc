@@ -15,11 +15,13 @@ COPY ./uv.lock ./pyproject.toml ./
 RUN uv sync --frozen
 
 COPY ./app/ ./app/
+# TODO: add tests
 # COPY ./tests/ ./tests/
-#
-# COPY ./alembic.ini ./
-# COPY ./alembic/ ./alembic/
-#
-# CMD ["uv", "run", "fastapi", "run", "--workers", "4", "./app/main.py"]
+
+COPY ./alembic.ini ./
+COPY ./alembic_async/ ./alembic_async/
 
 EXPOSE 8000
+
+CMD ["uv", "run", "fastapi", "run", "--workers", "4", "./app/main.py"]
+

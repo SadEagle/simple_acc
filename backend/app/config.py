@@ -5,6 +5,9 @@ from pydantic_settings import BaseSettings
 class Settings(BaseSettings):
     DEVICE_MAX_CONNECTIONS: int = 5
 
+    # DEBUG
+    # DB_URL: str = "postgresql+asyncpg://postgres"
+
     # DB PARAMS
     POSTGRES_DEV_SERVER: str
     POSTGRES_DEV_PORT: int = 5432
