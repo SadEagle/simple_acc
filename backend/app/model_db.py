@@ -34,7 +34,7 @@ class AccumDB(Base):
     device: Mapped["DeviceDB"] = relationship(back_populates="accums")
 
     __table_args__ = (
-        CheckConstraint("voltage >= 0", name="positive_volume"),
+        CheckConstraint("rated_voltage >= 0", name="positive_volume"),
         CheckConstraint("residual_capacity >= 0", name="positive_capacity"),
     )
 

@@ -1,4 +1,6 @@
+from typing import Sequence
 from fastapi import APIRouter, HTTPException, status
+
 
 from app.crud import (
     create_accum_db,
@@ -12,7 +14,7 @@ from app.model_data import (
     AccumCreate,
     AccumUpdate,
     AccumWithDevice,
-    # TupleAccums,
+    TupleAccums,
     Message,
 )
 from app.deps import CurrentAccumDep, SessionDep, get_device_db
@@ -23,16 +25,15 @@ app_accums = APIRouter(prefix="/accums")
 
 @app_accums.get("/{accum_id}")
 async def get_accum(current_accum: CurrentAccumDep) -> Accum:
-    return Accum.model_validate(current_accum)
+    return Accum.model_validate(current_accum, from_attributes=True)
 
 
-# TODO: fix
-# @app_accums.get("/")
-# async def get_accum_page(
-#     session: SessionDep, p: int = 1, p_size: int = 40
-# ) -> tuple["Accum", ...]:
-#     accum_page_data = await get_accum_page_db(session, p, p_size)
-#     return TupleAccums.validate_python(accum_page_data, from_attributes=True)
+@app_accums.get("/")
+async def get_accum_page(
+    session: SessionDep, p: int = 1, p_size: int = 40
+) -> Sequence[Accum]:
+    accum_page_data = await get_accum_page_db(session, p, p_size)
+    return TupleAccums.validate_python(accum_page_data, from_attributes=True)
 
 
 @app_accums.get("/{accum_id}")
@@ -45,14 +46,14 @@ async def get_accum_with_device(
         accum_device = await get_device_db(session, current_accum.device_id)
     else:
         accum_device = None
-    accum_with_accums_data = {
+    accum_with_device_data = {
         "accum": current_accum,
         "device": accum_device,
     }
-    accum_with_accums = AccumWithDevice.model_validate(
-        accum_with_accums_data, from_attributes=True
+    accum_with_device = AccumWithDevice.model_validate(
+        accum_with_device_data, from_attributes=True
     )
-    return accum_with_accums
+    return accum_with_device
 
 
 @app_accums.post("/add", status_code=status.HTTP_201_CREATED)

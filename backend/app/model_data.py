@@ -1,9 +1,10 @@
 from decimal import Decimal
+from typing import Sequence
 
 from pydantic import BaseModel, TypeAdapter
 
-# TupleAccums = TypeAdapter(tuple["Accum", ...])
-# TupleDevices = TypeAdapter(tuple["Device", ...])
+TupleAccums = TypeAdapter(Sequence["Accum"])
+TupleDevices = TypeAdapter(Sequence["Device"])
 
 
 class AccumCreate(BaseModel):
@@ -58,7 +59,7 @@ class Message(BaseModel):
     message: str
 
 
-# # NOTE: Need if TypeAdapter was defined before inner classes
-# # Ref: https://docs.pydantic.dev/2.11/errors/usage_errors/#class-not-fully-defined
-# TupleAccums.rebuild()
-# TupleDevices.rebuild()
+# NOTE: Need if TypeAdapter was defined before inner classes
+# Ref https//docs.pydantic.dev/2.11/errors/usage_errors/#class-not-fully-defined
+TupleAccums.rebuild()
+TupleDevices.rebuild()
