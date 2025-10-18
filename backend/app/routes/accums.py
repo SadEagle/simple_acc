@@ -21,7 +21,6 @@ from app.model_data import (
 )
 from app.deps import CurrentAccumDep, SessionDep, get_device_db
 from app.config import settings
-from app.model_db import AccumDB
 
 app_accums = APIRouter(prefix="/accums")
 
