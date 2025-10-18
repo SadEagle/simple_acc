@@ -1,9 +1,10 @@
 from typing import Sequence
-from fastapi import APIRouter, status
+from fastapi import APIRouter, status, HTTPException
 
 from app.crud import (
     create_device_db,
     delete_device_db,
+    get_device_by_name_db,
     get_device_connected_accums_db,
     get_device_page_db,
     update_device_db,
@@ -27,10 +28,23 @@ async def get_device(current_device: CurrentDeviceDep) -> Device:
     return Device.model_validate(current_device, from_attributes=True)
 
 
-@app_devices.get("/{device_id}")
+@app_devices.get("/device_by_name/{device_name}")
+async def get_accum_by_name(session: SessionDep, device_name: str) -> Device:
+    device = await get_device_by_name_db(session, device_name)
+    if device is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Accum with target name doesn't exist",
+        )
+    return Device.model_validate(device, from_attributes=True)
+
+
+# TODO: make bulk operation
+@app_devices.get("/full/{device_id}")
 async def get_device_with_accums(
     session: SessionDep, current_device: CurrentDeviceDep
 ) -> DeviceWithAccums:
+    """Get device and connected accums"""
     accums_tuple = await get_device_connected_accums_db(session, current_device.id)
     device_with_accums_data = {
         "device": current_device,
@@ -60,7 +74,7 @@ async def create_device(session: SessionDep, device_create: DeviceCreate) -> Dev
 async def update_device(
     session: SessionDep, current_device: CurrentDeviceDep, device_update: DeviceUpdate
 ) -> Device:
-    device_updated = update_device_db(session, current_device, device_update)
+    device_updated = await update_device_db(session, current_device, device_update)
     return Device.model_validate(device_updated, from_attributes=True)
 
 

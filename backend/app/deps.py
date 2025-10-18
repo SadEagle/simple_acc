@@ -16,7 +16,6 @@ async def create_session() -> AsyncGenerator[AsyncSession]:
 SessionDep: TypeAlias = Annotated[AsyncSession, Depends(create_session)]
 
 
-# NOTE: crud operator
 async def get_accum_db(session: SessionDep, accum_id: int) -> AccumDB:
     session_accum = await session.get(AccumDB, accum_id)
     if session_accum is None:
@@ -29,7 +28,6 @@ async def get_accum_db(session: SessionDep, accum_id: int) -> AccumDB:
 CurrentAccumDep: TypeAlias = Annotated[AccumDB, Depends(get_accum_db)]
 
 
-# NOTE: crud operator
 async def get_device_db(session: SessionDep, device_id: int) -> DeviceDB:
     session_device = await session.get(DeviceDB, device_id)
     if session_device is None:

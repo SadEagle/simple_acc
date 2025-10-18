@@ -2,7 +2,6 @@ from typing import Sequence
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, func
 
-from app.deps import SessionDep
 from app.model_data import (
     AccumCreate,
     AccumUpdate,
@@ -12,8 +11,28 @@ from app.model_data import (
 from app.model_db import AccumDB, DeviceDB
 
 
+async def get_device_by_name_db(
+    session: AsyncSession, device_name: str
+) -> DeviceDB | None:
+    statment = select(DeviceDB).where(DeviceDB.name == device_name)
+    device = await session.scalar(statment)
+    return device
+
+
+async def get_accum_by_name_db(
+    session: AsyncSession, accum_name: str
+) -> AccumDB | None:
+    statement = select(AccumDB).where(AccumDB.name == accum_name)
+    accum = await session.scalar(statement)
+    return accum
+
+
+async def is_device_exist_db(session: AsyncSession, device_id: int) -> bool:
+    return await session.get(DeviceDB, device_id) is not None
+
+
 async def get_device_connected_accums_amount_db(
-    session: SessionDep, device_id: int
+    session: AsyncSession, device_id: int
 ) -> int:
     statment = (
         select(func.count()).select_from(AccumDB).where(AccumDB.device_id == device_id)
@@ -24,11 +43,11 @@ async def get_device_connected_accums_amount_db(
 
 
 async def get_device_connected_accums_db(
-    session: SessionDep, device_id: int
+    session: AsyncSession, device_id: int
 ) -> Sequence[AccumDB]:
+    # TODO: may be good to make bulk select because may get big batch of data
     statment = select(AccumDB).where(AccumDB.device_id == device_id)
     connected_accums = (await session.scalars(statment)).all()
-    # .scalar() may be None, but count() always return value
     return connected_accums
 
 

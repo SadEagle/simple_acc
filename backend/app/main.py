@@ -1,4 +1,5 @@
-from fastapi import APIRouter, FastAPI
+from fastapi import APIRouter, FastAPI, HTTPException
+
 
 from app.routes.accums import app_accums
 from app.routes.devices import app_devices

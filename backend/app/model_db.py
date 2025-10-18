@@ -25,11 +25,16 @@ class AccumDB(Base):
     __tablename__ = "accumulator"
 
     id: Mapped[int] = mapped_column(primary_key=True)
-    name: Mapped[str]
+    name: Mapped[str] = mapped_column(unique=True, index=True)
     rated_voltage: Mapped[Decimal]
     residual_capacity: Mapped[Decimal]
     device_id: Mapped[int] = mapped_column(
-        ForeignKey("device.id"), nullable=True, index=True
+        ForeignKey(
+            "device.id",
+            ondelete="SET NULL",
+        ),
+        nullable=True,
+        index=True,
     )
     device: Mapped["DeviceDB"] = relationship(back_populates="accums")
 
@@ -43,7 +48,7 @@ class DeviceDB(Base):
     __tablename__ = "device"
 
     id: Mapped[int] = mapped_column(primary_key=True)
-    name: Mapped[str]
+    name: Mapped[str] = mapped_column(unique=True, index=True)
     firmware_ver: Mapped[str]
     is_on: Mapped[bool]
     accums: Mapped[list[AccumDB]] = relationship(back_populates="device")
