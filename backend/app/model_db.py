@@ -1,4 +1,5 @@
 from decimal import Decimal
+from datetime import timedelta
 
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
 from sqlalchemy import CheckConstraint, MetaData, ForeignKey
@@ -28,6 +29,7 @@ class AccumDB(Base):
     name: Mapped[str] = mapped_column(unique=True, index=True)
     rated_voltage: Mapped[Decimal]
     residual_capacity: Mapped[Decimal]
+    lifespan: Mapped[timedelta]
     device_id: Mapped[int] = mapped_column(
         ForeignKey(
             "device.id",
