@@ -1,5 +1,6 @@
 from decimal import Decimal
-from datetime import timedelta
+
+from datetime import date
 from typing import Sequence
 
 from pydantic import BaseModel, TypeAdapter
@@ -12,16 +13,16 @@ class AccumCreate(BaseModel):
     name: str
     rated_voltage: Decimal
     residual_capacity: Decimal
-    lifespan: timedelta
+    expiration_date: date
     device_id: int | None
 
 
 class AccumUpdate(BaseModel):
-    name: str | None
-    rated_voltage: Decimal | None
-    residual_capacity: Decimal | None
-    lifespan: timedelta | None
-    device_id: int | None
+    name: str | None = None
+    rated_voltage: Decimal | None = None
+    residual_capacity: Decimal | None = None
+    expiration_date: date | None = None
+    device_id: int | None = None
 
 
 class Accum(AccumCreate):
@@ -35,9 +36,9 @@ class DeviceCreate(BaseModel):
 
 
 class DeviceUpdate(BaseModel):
-    name: str | None
-    firmware_ver: str | None
-    is_on: bool | None
+    name: str | None = None
+    firmware_ver: str | None = None
+    is_on: bool | None = None
 
 
 class Device(DeviceCreate):

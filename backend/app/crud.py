@@ -60,7 +60,7 @@ async def get_accum_page_db(
 
 
 async def create_accum_db(session: AsyncSession, accum_create: AccumCreate) -> AccumDB:
-    accum_data = accum_create.model_dump(mode="json")
+    accum_data = accum_create.model_dump()
     accum = AccumDB(**accum_data)
     session.add(accum)
     await session.commit()
@@ -95,7 +95,7 @@ async def get_device_page_db(
 async def create_device_db(
     session: AsyncSession, device_create: DeviceCreate
 ) -> DeviceDB:
-    device_data = device_create.model_dump(mode="json")
+    device_data = device_create.model_dump()
     device = DeviceDB(**device_data)
     session.add(device)
     await session.commit()

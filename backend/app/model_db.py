@@ -1,5 +1,5 @@
 from decimal import Decimal
-from datetime import timedelta
+from datetime import date
 
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
 from sqlalchemy import CheckConstraint, MetaData, ForeignKey
@@ -29,7 +29,8 @@ class AccumDB(Base):
     name: Mapped[str] = mapped_column(unique=True, index=True)
     rated_voltage: Mapped[Decimal]
     residual_capacity: Mapped[Decimal]
-    lifespan: Mapped[timedelta]
+    # FIX: cant use date/datetime params because of weird bug in psycopg (asyncpg.exceptions.DataError)
+    expiration_date: Mapped[date]
     device_id: Mapped[int] = mapped_column(
         ForeignKey(
             "device.id",

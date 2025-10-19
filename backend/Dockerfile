@@ -15,8 +15,6 @@ COPY ./uv.lock ./pyproject.toml ./
 RUN uv sync --frozen
 
 COPY ./app/ ./app/
-# TODO: add tests
-# COPY ./tests/ ./tests/
 
 COPY ./alembic.ini ./
 COPY ./alembic_async/ ./alembic_async/
